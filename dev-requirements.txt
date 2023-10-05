@@ -1,0 +1,10 @@
+-e .
+
+build
+twine
+
+coverage
+mypy
+pre-commit
+pytest
+pytest-cov

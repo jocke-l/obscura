@@ -1,0 +1,21 @@
+name: Release
+on:
+  release:
+    types: [released]
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/obscura
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - run: pip install --user build
+      - run: python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1

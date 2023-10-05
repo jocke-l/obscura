@@ -1,0 +1,33 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task: pre-flight
+
+  dev-dependencies:
+    desc: Install dev dependencies
+    cmds:
+      - pip install --require-virtualenv -r dev-requirements.txt
+
+  pre-flight:
+    desc: Run all quality checks
+    cmds:
+      - task: pre-commit
+      - task: type-check
+      - task: test
+
+  pre-commit:
+    desc: Run pre-commit on all files
+    cmds:
+      - pre-commit run --all-files
+
+  test:
+    desc: Run all tests
+    cmds:
+      - pytest
+
+  type-check:
+    desc: Run static type-checking
+    cmds:
+      - mypy
