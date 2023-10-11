@@ -65,16 +65,22 @@ class TestEncryptedFile:
 
 
 class TestCommandLine:
-    def test_encrypt(self):
+    def test_encrypt(self, capsysbinary: pytest.CaptureFixture[bytes]) -> None:
         getpass_patch = mock.patch("obscura.getpass", return_value="hunter2")
         read_bytes_patch = mock.patch(
             "obscura.Path.read_bytes", return_value=b"secret snowflake"
         )
         with getpass_patch, read_bytes_patch:
             obscura.main(["some_file"])
-            # TODO: Assert on stdout
 
-    def test_decrypt(self, encrypted_file: obscura.EncryptedFile) -> None:
+        captured = capsysbinary.readouterr()
+        assert captured.out[:7] == b"OBSCURA"
+
+    def test_decrypt(
+        self,
+        encrypted_file: obscura.EncryptedFile,
+        capsysbinary: pytest.CaptureFixture[bytes],
+    ) -> None:
         getpass_patch = mock.patch("obscura.getpass", return_value="hunter2")
         read_bytes_patch = mock.patch(
             "obscura.Path.open",
@@ -82,4 +88,6 @@ class TestCommandLine:
         )
         with getpass_patch, read_bytes_patch:
             obscura.main(["-d", "some_file"])
-            # TODO: Assert on stdout
+
+        captured = capsysbinary.readouterr()
+        assert captured.out == b"secret snowflake"

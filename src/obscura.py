@@ -1,5 +1,4 @@
 import argparse
-import os
 import secrets
 import struct
 import sys
@@ -151,7 +150,7 @@ def decrypt_file(file: Path, *, passphrase: str) -> PlainText:
     )
 
 
-def main(argv: List[str] = sys.argv) -> None:
+def main(argv: List[str] = sys.argv[1:]) -> None:
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-d", "--decrypt", action="store_true")
     argparser.add_argument(
@@ -175,13 +174,9 @@ def main(argv: List[str] = sys.argv) -> None:
     passphrase = getpass()
 
     if args.decrypt:
-        os.write(
-            sys.stdout.fileno(),
-            decrypt_file(args.file, passphrase=passphrase),
-        )
+        sys.stdout.buffer.write(decrypt_file(args.file, passphrase=passphrase))
     else:
-        os.write(
-            sys.stdout.fileno(),
+        sys.stdout.buffer.write(
             encrypt_file(
                 args.file,
                 passphrase=passphrase,
